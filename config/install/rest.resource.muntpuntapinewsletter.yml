@@ -1,0 +1,9 @@
+id: muntpuntapinewsletter
+plugin_id: muntpuntapinewsletter
+granularity: method
+configuration:
+  POST:
+    supported_formats:
+      - json
+    supported_auth:
+      - basic_auth

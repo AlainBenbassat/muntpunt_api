@@ -1,0 +1,5 @@
+name: Muntpunt API
+description: handle remote requests
+package: Muntpunt
+type: module
+core_version_requirement: ^9

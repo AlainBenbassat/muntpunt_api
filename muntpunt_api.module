@@ -1,0 +1,17 @@
+<?php
+
+use Drupal\Core\Routing\RouteMatchInterface;
+
+/**
+ * Implements hook_help().
+ */
+function muntpunt_api_help($route_name, RouteMatchInterface $route_match) {
+  if ($route_name == 'help.page.muntpunt_api') {
+    return t('
+      <h2>Muntpunt API<h2>
+      <h3>Instructions</h3>
+      <p>The API endpoint is YOURSITE/muntpunt/api/<em>resource</em></p>
+    ');
+  }
+}
+
