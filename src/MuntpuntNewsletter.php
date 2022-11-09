@@ -4,7 +4,7 @@ namespace Drupal\muntpunt_api;
 use CRM_Mailing_Event_BAO_Subscribe;
 
 class MuntpuntNewsletter {
-  private const newsletterGroupId = 2061;
+  private const newsletterGroupId = 2101;
 
   static public function subscribe($email) {
     \Drupal::service('civicrm')->initialize();
