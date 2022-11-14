@@ -8,22 +8,20 @@ use Drupal\rest\ResourceResponse;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Drupal\muntpunt_api\MuntpuntApiHelper;
-use Drupal\muntpunt_api\MuntpuntNewsletter;
+use Drupal\muntpunt_api\MuntpuntEvents;
 
 /**
  * Provides a resource to get view modes by entity and bundle.
  *
  * @RestResource(
- *   id = "muntpuntapinewsletter",
- *   label = @Translation("Muntpunt api newsletter"),
+ *   id = "muntpuntapievents",
+ *   label = @Translation("Muntpunt api events"),
  *   uri_paths = {
- *     "canonical" = "/muntpunt/api/newsletter",
- *     "create" = "/muntpunt/api/newsletter"
+ *     "canonical" = "/muntpunt/api/events"
  *   }
  * )
  */
-class MuntpuntApiNewsletter extends ResourceBase {
-
+class MuntpuntApiEvents extends ResourceBase {
   /**
    * A current user instance.
    *
@@ -42,9 +40,7 @@ class MuntpuntApiNewsletter extends ResourceBase {
   }
 
   /**
-   * Responds to POST requests.
-   *
-   * @param string $payload
+   * Responds to GET requests.
    *
    * @return \Drupal\rest\ModifiedResourceResponse
    *   The HTTP response object.
@@ -52,38 +48,15 @@ class MuntpuntApiNewsletter extends ResourceBase {
    * @throws \Symfony\Component\HttpKernel\Exception\HttpException
    *   Throws exception expected.
    */
-  public function post($payload = NULL) {
+  public function get() {
     if (!MuntpuntApiHelper::isMuntpuntApiUser($this->currentUser)) {
       return new ModifiedResourceResponse('Unauthorized user', 403);
     }
 
-    $email = $this->extractEmail($payload);
-    if ($email) {
-      MuntpuntNewsletter::subscribe($email);
-      return new ModifiedResourceResponse("$email was successfully added", 201);
-    }
-    else {
-      return new ModifiedResourceResponse('No email found in request', 400);
-    }
+    return new ModifiedResourceResponse(MuntpuntEvents::get(), 200);
   }
 
   public function permissions() {
     return [];
-  }
-
-  private function extractEmail($payload) {
-    // the payload is always empty due to a bug in Drupal at this moment
-    // read directly from php://input if empty
-    if (empty($payload)) {
-      $payload = file_get_contents('php://input');
-    }
-
-    $decodedPayload = json_decode($payload, TRUE);
-    if (!empty($decodedPayload) && array_key_exists('email', $decodedPayload)) {
-      return $decodedPayload['email'];
-    }
-    else {
-      return FALSE;
-    }
   }
 }

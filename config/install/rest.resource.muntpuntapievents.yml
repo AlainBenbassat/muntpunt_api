@@ -1,0 +1,9 @@
+id: muntpuntapievents
+plugin_id: muntpuntapievents
+granularity: method
+configuration:
+  GET:
+    supported_formats:
+      - json
+    supported_auth:
+      - basic_auth
