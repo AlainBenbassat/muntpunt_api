@@ -21,7 +21,7 @@ class MuntpuntEvents {
       ->addWhere('extra_evenement_info.activiteit_status', '=', self::eventStatusCommunicatieOK)
       ->addWhere('is_active', '=', TRUE)
       ->addOrderBy('start_date', 'ASC')
-      ->setLimit(1)
+      ->setLimit(500)
       ->execute();
     foreach ($events as $event) {
       $eventArray[] = self::convertEventToObject($event);
