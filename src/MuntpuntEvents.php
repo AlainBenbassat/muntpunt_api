@@ -16,7 +16,7 @@ class MuntpuntEvents {
     $eventArray = [];
 
     $events = \Civi\Api4\Event::get(FALSE)
-      ->addSelect('*', 'custom.*', 'event_type_id:name')
+      ->addSelect('*', 'custom.*')
       ->addWhere('start_date', '>=', date('Y-m-d'))
       ->addWhere('extra_evenement_info.activiteit_status', '=', self::eventStatusCommunicatieOK)
       ->addWhere('is_active', '=', TRUE)
@@ -38,7 +38,7 @@ class MuntpuntEvents {
       $e[$field] = $event[$field];
     }
 
-    $e['event_type'] = $event['event_type_id:name'];
+    $e['event_type'] = $event['event_type_id'];
     $e['registration_url'] = \CRM_Utils_System::baseURL() . 'civicrm/event/register?reset=1&id=' . $event['id'];
     $e['registration_label'] = $event['registration_link_text'];
     $e['location'] = self::getEventLocation($event);
