@@ -4,6 +4,8 @@ namespace Drupal\muntpunt_api;
 
 class MuntpuntEvents {
   private const eventStatusCommunicatieOK = 5;
+  private const optionGroupIdLanguageLevels = 138;
+  private const optionGroupIdAges = 137;
 
   static public function get() {
     \Drupal::service('civicrm')->initialize();
@@ -46,8 +48,8 @@ class MuntpuntEvents {
 
     $e['targetAudiences'] = $event['extra_evenement_info.doelgroep'];
     $e['languages'] = $event['extra_evenement_info.taal'];
-    $e['languageLevels'] = $event['extra_evenement_info.Taalniveau'];
-    $e['ages'] = $event['extra_evenement_info.Leeftijd'];
+    $e['languageLevels'] = self::convertOptionValueLabelsToIds(self::optionGroupIdLanguageLevels, $event['extra_evenement_info.Taalniveau']);
+    $e['ages'] = self::convertOptionValueLabelsToIds(self::optionGroupIdAges, $event['extra_evenement_info.Leeftijd']);
     $e['prices'] = self::getEventPrices($event['id']);
 
     return $e;
@@ -228,5 +230,22 @@ class MuntpuntEvents {
     }
 
     return $relatedEvents;
+  }
+
+  private static function convertOptionValueLabelsToIds($optionGroupId, $optionValues) {
+    $optionValueIds = [];
+
+    foreach ($optionValues as $optionValue) {
+      $optionValueId = \CRM_Core_DAO::singleValueQuery("select id from civicrm_option_value where option_group_id = %1 and label = %2", [
+        1 => [$optionGroupId, 'Integer'],
+        2 => [$optionValue, 'String'],
+      ]);
+
+      if ($optionValueId) {
+        $optionValueIds[] = $optionValueId;
+      }
+    }
+
+    return $optionValueIds;
   }
 }
