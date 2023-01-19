@@ -35,7 +35,7 @@ class MuntpuntEvents {
 
     // add straightforward fields
     foreach (['id', 'title', 'start_date', 'end_date', 'summary', 'description'] as $field) {
-      $e->$field = $event[$field];
+      $e[$field] = $event[$field];
     }
 
     $e['event_type'] = $event['event_type_id:name'];
