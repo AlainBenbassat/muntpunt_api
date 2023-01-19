@@ -55,6 +55,7 @@ class MuntpuntApiEvents extends ResourceBase {
 
     $result = MuntpuntEvents::get();
     $response = new ResourceResponse($result);
+    $response->addCacheableDependency($result);
     return $response;
   }
 
