@@ -73,9 +73,9 @@ class MuntpuntEvents {
 
     $dao = \CRM_Core_DAO::executeQuery($sql);
     while ($dao->fetch()) {
-      $p = new \stdClass();
-      $p->pricelabel = $dao->pricelabel;
-      $p->amount = $dao->amount;
+      $p = [];
+      $p['pricelabel'] = $dao->pricelabel;
+      $p['amount'] = $dao->amount;
       $prices[] = $p;
     }
 
@@ -85,10 +85,10 @@ class MuntpuntEvents {
   /**
    * @param $locBlockId
    *
-   * @return \stdClass with 7 address lines (addressLine1, addressLine2...) and without blank lines between filled in lines
+   * @return array with 7 address lines (addressLine1, addressLine2...) and without blank lines between filled in lines
    */
   static private function getEventLocation($event) {
-    $a = new \stdClass();
+    $a = [];
 
     $addressDao = self::getLocBlockAddress($event['loc_block_id']);
     if ($addressDao) {
@@ -104,7 +104,7 @@ class MuntpuntEvents {
 
   static private function fillEventRooms(&$a, $event)  {
     if (count($event['extra_evenement_info.muntpunt_zalen']) > 0) {
-      $a->addressLine1 .= ' (' . implode(', ', $event['extra_evenement_info.muntpunt_zalen']) . ')';
+      $a['addressLine1'] .= ' (' . implode(', ', $event['extra_evenement_info.muntpunt_zalen']) . ')';
     }
   }
 
@@ -113,41 +113,41 @@ class MuntpuntEvents {
 
     if (!empty($addressDao->addressee)) {
       $propertyName = "addressLine$i";
-      $a->$propertyName = $addressDao->addressee;
+      $a[$propertyName] = $addressDao->addressee;
       $i++;
     }
 
     if (!empty($addressDao->street_address)) {
       $propertyName = "addressLine$i";
-      $a->$propertyName = $addressDao->street_address;
+      $a[$propertyName] = $addressDao->street_address;
       $i++;
     }
 
     if (!empty($addressDao->supplemental_address_1)) {
       $propertyName = "addressLine$i";
-      $a->$propertyName = $addressDao->supplemental_address_1;
+      $a[$propertyName] = $addressDao->supplemental_address_1;
       $i++;
     }
 
     if (!empty($addressDao->supplemental_address_2)) {
       $propertyName = "addressLine$i";
-      $a->$propertyName = $addressDao->supplemental_address_2;
+      $a[$propertyName] = $addressDao->supplemental_address_2;
       $i++;
     }
 
     if (!empty($addressDao->supplemental_address_3)) {
       $propertyName = "addressLine$i";
-      $a->$propertyName = $addressDao->supplemental_address_3;
+      $a[$propertyName] = $addressDao->supplemental_address_3;
       $i++;
     }
 
     if (!empty($addressDao->city)) {
       $propertyName = "addressLine$i";
       if ($addressDao->postal_code) {
-        $a->$propertyName = $addressDao->postal_code . ' ' . $addressDao->city;
+        $a[$propertyName] = $addressDao->postal_code . ' ' . $addressDao->city;
       }
       else {
-        $a->$propertyName = $addressDao->city;
+        $a[$propertyName] = $addressDao->city;
       }
 
       $i++;
@@ -155,13 +155,13 @@ class MuntpuntEvents {
 
     if (!empty($addressDao->county_id)) {
       $propertyName = "addressLine$i";
-      $a->$propertyName = \CRM_Core_PseudoConstant::country($addressDao->county_id);
+      $a[$propertyName] = \CRM_Core_PseudoConstant::country($addressDao->county_id);
       $i++;
     }
 
     while ($i <= 7) {
       $propertyName = "addressLine$i";
-      $a->$propertyName = '';
+      $a[$propertyName] = '';
       $i++;
     }
   }
@@ -169,7 +169,7 @@ class MuntpuntEvents {
   static function fillEmptyAddressLines(&$a) {
     for ($i = 1; $i <= 7; $i++) {
       $propertyName = "addressLine$i";
-      $a->$propertyName = '';
+      $a[$propertyName] = '';
     }
   }
 
