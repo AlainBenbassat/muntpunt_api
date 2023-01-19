@@ -24,31 +24,31 @@ class MuntpuntEvents {
       ->setLimit(500)
       ->execute();
     foreach ($events as $event) {
-      $eventArray[] = self::convertEventToObject($event);
+      $eventArray[] = self::convertEventToArray($event);
     }
 
     return $eventArray;
   }
 
-  static private function convertEventToObject($event) {
-    $e = new \stdClass();
+  static private function convertEventToArray($event) {
+    $e = [];
 
     // add straightforward fields
     foreach (['id', 'title', 'start_date', 'end_date', 'summary', 'description'] as $field) {
       $e->$field = $event[$field];
     }
 
-    $e->event_type = $event['event_type_id:name'];
-    $e->registration_url = \CRM_Utils_System::baseURL() . 'civicrm/event/register?reset=1&id=' . $event['id'];
-    $e->registration_label = $event['registration_link_text'];
-    $e->location = self::getEventLocation($event);
-    $e->related_events  = self::getRelatedEvents($event['id']);
+    $e['event_type'] = $event['event_type_id:name'];
+    $e['registration_url'] = \CRM_Utils_System::baseURL() . 'civicrm/event/register?reset=1&id=' . $event['id'];
+    $e['registration_label'] = $event['registration_link_text'];
+    $e['location'] = self::getEventLocation($event);
+    $e['related_events']  = self::getRelatedEvents($event['id']);
 
-    $e->targetAudiences = $event['extra_evenement_info.doelgroep'];
-    $e->languages = $event['extra_evenement_info.taal'];
-    $e->languageLevels = $event['extra_evenement_info.taalniveau_42'];
-    $e->ages = $event['extra_evenement_info.leeftijd_41'];
-    $e->prices = self::getEventPrices($event['id']);
+    $e['targetAudiences'] = $event['extra_evenement_info.doelgroep'];
+    $e['languages'] = $event['extra_evenement_info.taal'];
+    $e['languageLevels'] = $event['extra_evenement_info.taalniveau_42'];
+    $e['ages'] = $event['extra_evenement_info.leeftijd_41'];
+    $e['prices'] = self::getEventPrices($event['id']);
 
     return $e;
   }

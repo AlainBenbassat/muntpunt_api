@@ -53,7 +53,9 @@ class MuntpuntApiEvents extends ResourceBase {
       return new ModifiedResourceResponse('Unauthorized user', 403);
     }
 
-    return new ModifiedResourceResponse(MuntpuntEvents::get(), 200);
+    $result = MuntpuntEvents::get();
+    $response = new ResourceResponse($result);
+    return $response;
   }
 
   public function permissions() {
