@@ -46,8 +46,8 @@ class MuntpuntEvents {
 
     $e['targetAudiences'] = $event['extra_evenement_info.doelgroep'];
     $e['languages'] = $event['extra_evenement_info.taal'];
-    $e['languageLevels'] = $event['extra_evenement_info.taalniveau_42'];
-    $e['ages'] = $event['extra_evenement_info.leeftijd_41'];
+    $e['languageLevels'] = $event['extra_evenement_info.Taalniveau'];
+    $e['ages'] = $event['extra_evenement_info.Leeftijd'];
     $e['prices'] = self::getEventPrices($event['id']);
 
     return $e;
