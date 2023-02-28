@@ -8,7 +8,7 @@ use Drupal\rest\ResourceResponse;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Drupal\muntpunt_api\MuntpuntApiHelper;
-use Drupal\muntpunt_api\MuntpuntEvents;
+use Drupal\muntpunt_api\MuntpuntEventTypes;
 
 /**
  * Provides a resource to get view modes by entity and bundle.
