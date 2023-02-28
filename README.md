@@ -11,8 +11,8 @@ Requires Drupal modules
 
 Installation and updates
 ==
-drush pm-uninstall muntpunt_api -y
 drush pm-uninstall rest -y
+drush pm-uninstall muntpunt_api -y
 drush cr
 drush en muntpunt_api -y
 drush en rest -y
