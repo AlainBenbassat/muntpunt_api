@@ -71,8 +71,9 @@ class MuntpuntEvents {
     $img = [];
     preg_match('/< *img[^>]*src *= *["\']?([^"\']*)/i', $description, $img);
     if (!empty($img[1])) {
-      preg_replace('/< *img.*\/>/i', '', $description);
+      $description = preg_replace('/< *img.*\/>/i', '', $description);
       $description = str_replace($img[1], '', $description);
+      $description = str_replace(['<p></p>', '\r\n'], '', $description);
       return $img[1];
     }
 
