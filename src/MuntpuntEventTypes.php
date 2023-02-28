@@ -14,7 +14,7 @@ class MuntpuntEventTypes {
   static private function getEventTypes() {
     $eventTypeArray = [];
 
-    $eventTypes = \Civi\Api4\Event::get()
+    $eventTypes = \Civi\Api4\Event::get(FALSE)
       ->addSelect('event_type_id', 'event_type_id:label')
       ->addGroupBy('event_type_id')
       ->addWhere('start_date', '>=', '2023-01-01')
