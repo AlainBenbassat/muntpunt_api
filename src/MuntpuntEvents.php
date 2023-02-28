@@ -58,11 +58,11 @@ class MuntpuntEvents {
     $e['location'] = self::getEventLocation($event);
     $e['related_events']  = self::getRelatedEvents($event['id']);
 
-    $e['targetAudiences'] = $event['extra_evenement_info.doelgroep'];
-    $e['languages'] = $event['extra_evenement_info.taal'];
     $e['languageLevels'] = self::convertOptionValueLabelsToIds(self::optionGroupIdLanguageLevels, $event['extra_evenement_info.Taalniveau']);
     $e['ages'] = self::convertOptionValueLabelsToIds(self::optionGroupIdAges, $event['extra_evenement_info.Leeftijd']);
     $e['prices'] = self::getEventPrices($event['id']);
+
+    $e['paspartoe'] = TRUE;
 
     return $e;
   }
