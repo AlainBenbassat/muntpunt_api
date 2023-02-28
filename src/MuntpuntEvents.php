@@ -73,7 +73,7 @@ class MuntpuntEvents {
     if (!empty($img[1])) {
       $description = preg_replace('/< *img.*\/>/i', '', $description);
       $description = str_replace($img[1], '', $description);
-      $description = str_replace(['<p></p>', '\r\n'], '', $description);
+      $description = str_replace(['<p></p>', "\r\n"], '', $description);
       return $img[1];
     }
 
