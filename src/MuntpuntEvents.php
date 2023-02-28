@@ -36,9 +36,21 @@ class MuntpuntEvents {
     $e = [];
 
     // add straightforward fields
-    foreach (['id', 'title', 'start_date', 'end_date', 'summary', 'description'] as $field) {
+    foreach (['id', 'title', 'start_date', 'end_date', 'summary'] as $field) {
       $e[$field] = $event[$field];
     }
+
+    $img = self::extractImage($event['description']);
+    if ($img) {
+      $e['teaser_image'] = $img;
+      $e['content_image'] = $img;
+    }
+    else {
+      $e['teaser_image'] = 'https://TODO-GET-IMAGE-FROM-CUSTOM-FIELD.png';
+      $e['content_image'] = 'https://TODO-GET-IMAGE-FROM-CUSTOM-FIELD.png';
+    }
+
+    $e['description'] = $event['description'];
 
     $e['event_type'] = $event['event_type_id'];
     $e['registration_url'] = \CRM_Utils_System::baseURL() . 'civicrm/event/register?reset=1&id=' . $event['id'];
@@ -53,6 +65,17 @@ class MuntpuntEvents {
     $e['prices'] = self::getEventPrices($event['id']);
 
     return $e;
+  }
+
+  static private function extractImage(&$description) {
+    $img = [];
+    preg_match('/< *img[^>]*src *= *["\']?([^"\']*)/i', $description, $img);
+    if (!empty($img[1])) {
+      $description = str_replace($description, $img[1], '');
+      return $img[1];
+    }
+
+    return FALSE;
   }
 
   static private function getEventPrices($eventId) {
@@ -236,7 +259,7 @@ class MuntpuntEvents {
     $optionValueIds = [];
 
     foreach ($optionValues as $optionValue) {
-      $optionValueId = \CRM_Core_DAO::singleValueQuery("select id from civicrm_option_value where option_group_id = %1 and label = %2", [
+      $optionValueId = \CRM_Core_DAO::singleValueQuery("select id from civicrm_option_value where option_group_id = %1 and value = %2", [
         1 => [$optionGroupId, 'Integer'],
         2 => [$optionValue, 'String'],
       ]);

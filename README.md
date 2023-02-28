@@ -9,3 +9,11 @@ Requires Drupal modules
  * Serialization
  * RESTful Web Services
 
+Installation and updates
+==
+drush pm-uninstall muntpunt_api -y
+drush pm-uninstall rest -y
+drush en rest -y
+drush en muntpunt_api -y
+
+
