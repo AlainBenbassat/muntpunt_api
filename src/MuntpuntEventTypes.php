@@ -2,7 +2,7 @@
 
 namespace Drupal\muntpunt_api;
 
-class MuntpuntEvents {
+class MuntpuntEventTyes {
 
   static public function get() {
     \Drupal::service('civicrm')->initialize();
