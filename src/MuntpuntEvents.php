@@ -43,11 +43,15 @@ class MuntpuntEvents {
     $img = self::extractImage($event['description']);
     if ($img) {
       $e['teaser_image'] = $img;
+      $e['teaser_image_alt'] = 'illustratie';
       $e['content_image'] = $img;
+      $e['content_image_alt'] = 'illustratie';
     }
     else {
       $e['teaser_image'] = 'https://TODO-GET-IMAGE-FROM-CUSTOM-FIELD.png';
       $e['content_image'] = 'https://TODO-GET-IMAGE-FROM-CUSTOM-FIELD.png';
+      $e['teaser_image_alt'] = 'illustratie';
+      $e['content_image_alt'] = 'illustratie';
     }
 
     $e['description'] = $event['description'];
