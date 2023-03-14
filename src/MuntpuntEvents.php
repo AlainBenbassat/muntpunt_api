@@ -7,11 +7,39 @@ class MuntpuntEvents {
   private const optionGroupIdLanguageLevels = 138;
   private const optionGroupIdAges = 137;
 
+  private static $languageLevels = [];
+  private static $ages = [];
+
   static public function get() {
     \Drupal::service('civicrm')->initialize();
 
+    self::fillLanguageLevels();
+    self::fillAges();
+
     $upcomingEvents = self::getUpcomingEvents();
     return $upcomingEvents;
+  }
+
+  static private function fillLanguageLevels() {
+    $optionValues = \Civi\Api4\OptionValue::get()
+      ->addSelect('id', 'label')
+      ->addWhere('option_group_id:name', '=', 'Extra_Evenement_info_Taalniveau')
+      ->execute();
+
+    foreach ($optionValues as $optionValue) {
+      self::$languageLevels[$optionValue['label']] = $optionValue['id'];
+    }
+  }
+
+  static private function fillAges() {
+    $optionValues = \Civi\Api4\OptionValue::get()
+      ->addSelect('id', 'label')
+      ->addWhere('option_group_id:name', '=', 'Extra_Evenement_info_Leeftijd')
+      ->execute();
+
+    foreach ($optionValues as $optionValue) {
+      self::$ages[$optionValue['label']] = $optionValue['id'];
+    }
   }
 
   static private function getUpcomingEvents() {
@@ -62,8 +90,8 @@ class MuntpuntEvents {
     $e['location'] = self::getEventLocation($event);
     $e['related_events']  = self::getRelatedEvents($event['id']);
 
-    $e['languageLevels'] = self::convertOptionValueLabelsToIds(self::optionGroupIdLanguageLevels, $event['extra_evenement_info.Taalniveau']);
-    $e['ages'] = self::convertOptionValueLabelsToIds(self::optionGroupIdAges, $event['extra_evenement_info.Leeftijd']);
+    $e['languageLevels'] = self::convertOptionValueLabelsLanguageLevel($event['extra_evenement_info.Taalniveau']);
+    $e['ages'] = self::convertOptionValueLabelsAge($event['extra_evenement_info.Leeftijd']);
     $e['prices'] = self::getEventPrices($event['id']);
 
     $e['paspartoe'] = TRUE;
@@ -261,18 +289,25 @@ class MuntpuntEvents {
     return $relatedEvents;
   }
 
-  private static function convertOptionValueLabelsToIds($optionGroupId, $optionValues) {
+  private static function convertOptionValueLabelsAge($optionValues) {
     $optionValueIds = [];
 
     foreach ($optionValues as $optionValue) {
-      $optionValueId = \CRM_Core_DAO::singleValueQuery("select id from civicrm_option_value where option_group_id = %1 and value = %2", [
-        1 => [$optionGroupId, 'Integer'],
-        2 => [$optionValue, 'String'],
-      ]);
+      $optionValueId = self::$ages[$optionValue];
 
-      if ($optionValueId) {
-        $optionValueIds[] = $optionValueId;
-      }
+      $optionValueIds[] = ['age_id' => $optionValueId, 'age_label' => $optionValue];
+    }
+
+    return $optionValueIds;
+  }
+
+  private static function convertOptionValueLabelsLanguageLevel($optionValues) {
+    $optionValueIds = [];
+
+    foreach ($optionValues as $optionValue) {
+      $optionValueId = self::$languageLevels[$optionValue];
+
+      $optionValueIds[] = ['languagelevel_id' => $optionValueId, 'languagelevel_label' => $optionValue];
     }
 
     return $optionValueIds;
