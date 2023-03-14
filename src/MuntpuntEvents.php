@@ -21,7 +21,7 @@ class MuntpuntEvents {
   }
 
   static private function fillLanguageLevels() {
-    $optionValues = \Civi\Api4\OptionValue::get()
+    $optionValues = \Civi\Api4\OptionValue::get(FALSE)
       ->addSelect('id', 'label')
       ->addWhere('option_group_id:name', '=', 'Extra_Evenement_info_Taalniveau')
       ->execute();
@@ -32,7 +32,7 @@ class MuntpuntEvents {
   }
 
   static private function fillAges() {
-    $optionValues = \Civi\Api4\OptionValue::get()
+    $optionValues = \Civi\Api4\OptionValue::get(FALSE)
       ->addSelect('id', 'label')
       ->addWhere('option_group_id:name', '=', 'Extra_Evenement_info_Leeftijd')
       ->execute();
