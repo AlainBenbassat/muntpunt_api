@@ -4,8 +4,6 @@ namespace Drupal\muntpunt_api;
 
 class MuntpuntEvents {
   private const eventStatusCommunicatieOK = 5;
-  private const optionGroupIdLanguageLevels = 138;
-  private const optionGroupIdAges = 137;
 
   private static $languageLevels = [];
   private static $ages = [];
@@ -22,7 +20,7 @@ class MuntpuntEvents {
 
   static private function fillLanguageLevels() {
     $optionValues = \Civi\Api4\OptionValue::get(FALSE)
-      ->addSelect('id', 'label')
+      ->addSelect('id', 'name')
       ->addWhere('option_group_id:name', '=', 'Extra_Evenement_info_Taalniveau')
       ->execute();
 
@@ -33,12 +31,12 @@ class MuntpuntEvents {
 
   static private function fillAges() {
     $optionValues = \Civi\Api4\OptionValue::get(FALSE)
-      ->addSelect('id', 'label')
+      ->addSelect('id', 'name')
       ->addWhere('option_group_id:name', '=', 'Extra_Evenement_info_Leeftijd')
       ->execute();
 
     foreach ($optionValues as $optionValue) {
-      self::$ages[$optionValue['label']] = $optionValue['id'];
+      self::$ages[$optionValue['name']] = $optionValue['id'];
     }
   }
 
