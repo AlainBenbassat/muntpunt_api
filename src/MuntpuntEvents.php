@@ -20,23 +20,23 @@ class MuntpuntEvents {
 
   static private function fillLanguageLevels() {
     $optionValues = \Civi\Api4\OptionValue::get(FALSE)
-      ->addSelect('id', 'name')
+      ->addSelect('id', 'label', 'value')
       ->addWhere('option_group_id:name', '=', 'Extra_Evenement_info_Taalniveau')
       ->execute();
 
     foreach ($optionValues as $optionValue) {
-      self::$languageLevels[$optionValue['label']] = $optionValue['id'];
+      self::$languageLevels[$optionValue['value']] = [$optionValue['id'], $optionValue['label']];
     }
   }
 
   static private function fillAges() {
     $optionValues = \Civi\Api4\OptionValue::get(FALSE)
-      ->addSelect('id', 'name')
+      ->addSelect('id', 'label', 'name')
       ->addWhere('option_group_id:name', '=', 'Extra_Evenement_info_Leeftijd')
       ->execute();
 
     foreach ($optionValues as $optionValue) {
-      self::$ages[$optionValue['name']] = $optionValue['id'];
+      self::$ages[$optionValue['value']] = [$optionValue['id'], $optionValue['label']];
     }
   }
 
@@ -291,9 +291,9 @@ class MuntpuntEvents {
     $optionValueIds = [];
 
     foreach ($optionValues as $optionValue) {
-      $optionValueId = self::$ages[$optionValue];
+      [$optionValueId, $optionValueLabel] = self::$ages[$optionValue];
 
-      $optionValueIds[] = ['age_id' => $optionValueId, 'age_label' => $optionValue];
+      $optionValueIds[] = ['age_id' => $optionValueId, 'age_label' => $optionValueLabel];
     }
 
     return $optionValueIds;
@@ -303,9 +303,9 @@ class MuntpuntEvents {
     $optionValueIds = [];
 
     foreach ($optionValues as $optionValue) {
-      $optionValueId = self::$languageLevels[$optionValue];
+      [$optionValueId, $optionValueLabel] = self::$languageLevels[$optionValue];
 
-      $optionValueIds[] = ['languagelevel_id' => $optionValueId, 'languagelevel_label' => $optionValue];
+      $optionValueIds[] = ['languagelevel_id' => $optionValueId, 'languagelevel_label' => $optionValueLabel];
     }
 
     return $optionValueIds;
