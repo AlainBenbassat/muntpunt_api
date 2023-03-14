@@ -31,7 +31,7 @@ class MuntpuntEvents {
 
   static private function fillAges() {
     $optionValues = \Civi\Api4\OptionValue::get(FALSE)
-      ->addSelect('id', 'label', 'name')
+      ->addSelect('id', 'label', 'value')
       ->addWhere('option_group_id:name', '=', 'Extra_Evenement_info_Leeftijd')
       ->execute();
 
