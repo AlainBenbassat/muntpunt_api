@@ -168,9 +168,9 @@ class MuntpuntEvents {
   static private function fillAddressLines(&$a, $addressDao) {
     $i = 1;
 
-    if (!empty($addressDao->addressee)) {
+    if (!empty($addressDao->name)) {
       $propertyName = "addressLine$i";
-      $a[$propertyName] = $addressDao->addressee;
+      $a[$propertyName] = $addressDao->name;
       $i++;
     }
 
