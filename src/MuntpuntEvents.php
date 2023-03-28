@@ -83,8 +83,16 @@ class MuntpuntEvents {
     $e['description'] = $event['description'];
 
     $e['event_type'] = $event['event_type_id'];
-    $e['registration_url'] = \CRM_Utils_System::baseURL() . 'civicrm/event/register?reset=1&id=' . $event['id'];
-    $e['registration_label'] = $event['registration_link_text'];
+
+    if ($event['is_online_registration']) {
+      $e['registration_url'] = \CRM_Utils_System::baseURL() . 'civicrm/event/register?reset=1&id=' . $event['id'];
+      $e['registration_label'] = $event['registration_link_text'];
+    }
+    else {
+      $e['registration_url'] = '';
+      $e['registration_label'] = '';
+    }
+
     $e['location'] = self::getEventLocation($event);
     $e['related_events']  = self::getRelatedEvents($event['id']);
 
