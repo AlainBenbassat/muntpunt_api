@@ -4,6 +4,9 @@ namespace Drupal\muntpunt_api;
 
 class MuntpuntEvents {
   private const eventStatusCommunicatieOK = 5;
+  private const participantRoleOrganizer = 5;
+  private const participantRolePartner = 6;
+  private const websiteTypeIdMain = 2;
 
   private static $languageLevels = [];
   private static $ages = [];
@@ -66,6 +69,10 @@ class MuntpuntEvents {
       $e[$field] = $event[$field];
     }
 
+    $e['date_display'] = $event['extra_evenement_info.Tekstuele_datum'];
+
+    $e['organizer'] = self::getEventOrganizerAndPartners($event);
+
     $img = self::extractImage($event['description']);
     if ($img) {
       $e['teaser_image'] = $img;
@@ -100,7 +107,7 @@ class MuntpuntEvents {
     $e['ages'] = self::convertOptionValueLabelsAge($event['extra_evenement_info.Leeftijd']);
     $e['prices'] = self::getEventPrices($event['id']);
 
-    $e['paspartoe'] = TRUE;
+    $e['paspartoe'] = $event['extra_evenement_info.Paspartoe'];
 
     return $e;
   }
@@ -165,6 +172,67 @@ class MuntpuntEvents {
     }
 
     return $a;
+  }
+
+  static private function getEventOrganizerAndPartners($eventId) {
+    $organizers = self::getEventOrganizerOrPartnersAsList($eventId, self::participantRoleOrganizer) ?? 'Muntpunt';
+    $partners = self::getEventOrganizerOrPartnersAsList($eventId, self::participantRolePartner);
+
+    if ($partners) {
+      return "$organizers i.s.m. $partners";
+    }
+    else {
+      return $organizers;
+    }
+  }
+
+  static private function getEventOrganizerOrPartnersAsList($eventId, $roleId) {
+    $sql = "
+      select
+        c.display_name,
+        w.url
+      from
+        civicrm_participant p
+      inner join
+        civicrm_contact c on c.id = p.contact_id
+      left outer join
+        civicrm_website w on w.contact_id = c.id and w.website_type_id = %3
+      order by
+        c.sort_name
+      where
+        p.event_id = %1
+      and
+        p.role_id like %2
+      order by
+        c.sort_name
+    ";
+    $sqlParams = [
+      1 => [$eventId, 'Integer'],
+      2 => ["%$roleId%", 'String'],
+      3 => [self::websiteTypeIdMain, 'Integer'],
+    ];
+
+    $dao = \CRM_Core_DAO::executeQuery($sql, $sqlParams);
+    return self::convertEventOrganizerOrPartnersToList($dao);
+  }
+
+  static private function convertEventOrganizerOrPartnersToList($dao) {
+    $list = '';
+
+    while ($dao->fetch()) {
+      if (!empty($list)) {
+        $list .= ', ';
+      }
+
+      if ($dao->url) {
+        $list .= '<a href="' . $dao->url . '">' . $dao->display_name . '</a>';
+      }
+      else {
+        $list .= $dao->display_name;
+      }
+    }
+
+    return $list;
   }
 
   static private function fillEventRooms(&$a, $event)  {
