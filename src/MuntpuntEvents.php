@@ -71,7 +71,7 @@ class MuntpuntEvents {
 
     $e['date_display'] = $event['extra_evenement_info.Tekstuele_datum'];
 
-    $e['organizer'] = self::getEventOrganizerAndPartners($event);
+    $e['organizer'] = self::getEventOrganizerAndPartners($event['id']);
 
     $img = self::extractImage($event['description']);
     if ($img) {
