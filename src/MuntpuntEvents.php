@@ -197,8 +197,6 @@ class MuntpuntEvents {
         civicrm_contact c on c.id = p.contact_id
       left outer join
         civicrm_website w on w.contact_id = c.id and w.website_type_id = %3
-      order by
-        c.sort_name
       where
         p.event_id = %1
       and
