@@ -175,7 +175,10 @@ class MuntpuntEvents {
   }
 
   static private function getEventOrganizerAndPartners($eventId) {
-    $organizers = self::getEventOrganizerOrPartnersAsList($eventId, self::participantRoleOrganizer) ?? 'Muntpunt';
+    $organizers = self::getEventOrganizerOrPartnersAsList($eventId, self::participantRoleOrganizer);
+    if (empty($organizers)) {
+      $organizers = 'Muntpunt';
+    }
     $partners = self::getEventOrganizerOrPartnersAsList($eventId, self::participantRolePartner);
 
     if ($partners) {
