@@ -101,7 +101,7 @@ class MuntpuntEvents {
     }
 
     $e['location'] = self::getEventLocation($event);
-    $e['related_events']  = self::getRelatedEvents($event['id']);
+    $e['related_events']  = self::getRelatedEvents($event['id'], $event['extra_evenement_info.Reekstitel']);
 
     $e['languageLevels'] = self::convertOptionValueLabelsLanguageLevel($event['extra_evenement_info.Taalniveau']);
     $e['ages'] = self::convertOptionValueLabelsAge($event['extra_evenement_info.Leeftijd']);
@@ -145,10 +145,11 @@ class MuntpuntEvents {
 
     $dao = \CRM_Core_DAO::executeQuery($sql);
     while ($dao->fetch()) {
-      $p = [];
-      $p['pricelabel'] = $dao->pricelabel;
-      $p['amount'] = $dao->amount;
-      $prices[] = $p;
+      $prices[] = '€ ' . str_replace('.00','', $dao->amount) . ', ' . $dao->pricelabel;
+    }
+
+    if (empty($prices)) {
+      $prices[] = 'Gratis';
     }
 
     return $prices;
@@ -331,8 +332,9 @@ class MuntpuntEvents {
     }
   }
 
-  static private function getRelatedEvents($eventId) {
+  static private function getRelatedEvents($eventId, $eventSeries) {
     $relatedEvents = [];
+    $relatedEventsBySeries = [];
 
     $parentEventId = \CRM_Core_DAO::singleValueQuery("select parent_id from civicrm_recurring_entity where entity_table = 'civicrm_event' and entity_id = $eventId");
     if ($parentEventId) {
@@ -350,7 +352,7 @@ class MuntpuntEvents {
         and
           re.entity_id <> $eventId
         and
-          e.start_date >= now()
+          e.start_date >= date_format(now(), '%Y-%m-%d')
         and
           e.is_active = 1
       ";
@@ -359,6 +361,42 @@ class MuntpuntEvents {
       while ($dao->fetch()) {
         $relatedEvents[] = $dao->entity_id;
       }
+    }
+
+    if ($eventSeries) {
+      $relatedEventsBySeries = self::getRelatedEventSeries($eventSeries, array_merge([$eventId], $relatedEvents));
+    }
+
+    return array_merge($relatedEvents, $relatedEventsBySeries);
+  }
+
+  private static function getRelatedEventSeries($eventSeries, $eventIdsToExclude) {
+    $relatedEvents = [];
+
+    $sql = "
+        select
+          e.id
+        from
+          civicrm_event e
+        inner join
+          civicrm_value_extra_evenement_info eei on e.id = eei.entity_id
+        where
+          e.id not in %1
+        and
+          e.start_date >= date_format(now(), '%Y-%m-%d')
+        and
+          e.is_active = 1
+        and
+          eei.reekstitel_45 = %2
+      ";
+    $sqlParams = [
+      1 => [implode(',', $eventIdsToExclude), 'String'],
+      2 => [$eventSeries, 'String'],
+    ];
+
+    $dao = \CRM_Core_DAO::executeQuery($sql, $sqlParams);
+    while ($dao->fetch()) {
+      $relatedEvents[] = $dao->id;
     }
 
     return $relatedEvents;
