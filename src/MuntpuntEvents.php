@@ -146,7 +146,7 @@ class MuntpuntEvents {
     $dao = \CRM_Core_DAO::executeQuery($sql);
     while ($dao->fetch()) {
       $amount = str_replace('.00','', $dao->amount);
-      $amount = str_replace('.',',', $dao->amount);
+      $amount = str_replace('.',',', $amount);
       $prices[] = '€ ' . $amount . ', ' . $dao->pricelabel;
     }
 
