@@ -374,6 +374,7 @@ class MuntpuntEvents {
 
   private static function getRelatedEventSeries($eventSeries, $eventIdsToExclude) {
     $relatedEvents = [];
+    $idList = implode(',', $eventIdsToExclude);
 
     $sql = "
         select
@@ -383,17 +384,16 @@ class MuntpuntEvents {
         inner join
           civicrm_value_extra_evenement_info eei on e.id = eei.entity_id
         where
-          e.id not in %1
+          e.id not in ($idList)
         and
           e.start_date >= date_format(now(), '%Y-%m-%d')
         and
           e.is_active = 1
         and
-          eei.reekstitel_45 = %2
+          eei.reekstitel_45 = %1
       ";
     $sqlParams = [
-      1 => [implode(',', $eventIdsToExclude), 'String'],
-      2 => [$eventSeries, 'String'],
+      1 => [$eventSeries, 'String'],
     ];
 
     $dao = \CRM_Core_DAO::executeQuery($sql, $sqlParams);
