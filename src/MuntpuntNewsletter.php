@@ -56,10 +56,12 @@ class MuntpuntNewsletter {
   static private function addContactToNewsletterGroup($contactId, $email) {
     $groupContactStatus = self::getNewsletterGroupContactStatus($contactId);
     if ($groupContactStatus == 'Added') {
+      self::createNewsletterGroupContact($contactId, $email);
       // do nothing, already subscribed
     }
     elseif ($groupContactStatus == 'Removed') {
-      self::updateNewsletterGroupContactStatus($contactId);
+      //self::updateNewsletterGroupContactStatus($contactId);
+      self::createNewsletterGroupContact($contactId, $email);
     }
     else {
       self::createNewsletterGroupContact($contactId, $email);
@@ -89,13 +91,7 @@ class MuntpuntNewsletter {
   }
 
   static private function createNewsletterGroupContact($contactId, $email) {
-    /*
-    $results = \Civi\Api4\GroupContact::create(FALSE)
-      ->addValue('group_id', self::newsletterGroupId)
-      ->addValue('contact_id', $contactId)
-      ->addValue('status', 'Pending')
-      ->execute();
-    */
+    // we use API v3 because at this moment the APIv4 equivallent is not fully implemented
     civicrm_api3('MailingEventSubscribe', 'create', [
       'group_id' => self::newsletterGroupId,
       'email' => $email,
