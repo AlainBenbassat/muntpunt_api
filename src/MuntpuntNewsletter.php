@@ -10,7 +10,7 @@ class MuntpuntNewsletter {
     \Drupal::service('civicrm')->initialize();
 
     $contactId = self::getOrCreateContactByEmail($email);
-    self::addContactToNewsletterGroup($contactId);
+    self::addContactToNewsletterGroup($contactId, $email);
   }
 
   static private function getOrCreateContactByEmail($email) {
@@ -53,7 +53,7 @@ class MuntpuntNewsletter {
       ->execute();
   }
 
-  static private function addContactToNewsletterGroup($contactId) {
+  static private function addContactToNewsletterGroup($contactId, $email) {
     $groupContactStatus = self::getNewsletterGroupContactStatus($contactId);
     if ($groupContactStatus == 'Added') {
       // do nothing, already subscribed
@@ -62,7 +62,7 @@ class MuntpuntNewsletter {
       self::updateNewsletterGroupContactStatus($contactId);
     }
     else {
-      self::createNewsletterGroupContact($contactId);
+      self::createNewsletterGroupContact($contactId, $email);
     }
   }
 
@@ -82,17 +82,23 @@ class MuntpuntNewsletter {
 
   static private function updateNewsletterGroupContactStatus($contactId) {
     $results = \Civi\Api4\GroupContact::update(FALSE)
-      ->addValue('status', 'Added')
+      ->addValue('status', 'Pending')
       ->addWhere('group_id', '=', self::newsletterGroupId)
       ->addWhere('contact_id', '=', $contactId)
       ->execute();
   }
 
-  static private function createNewsletterGroupContact($contactId) {
+  static private function createNewsletterGroupContact($contactId, $email) {
+    /*
     $results = \Civi\Api4\GroupContact::create(FALSE)
       ->addValue('group_id', self::newsletterGroupId)
       ->addValue('contact_id', $contactId)
-      ->addValue('status', 'Added')
+      ->addValue('status', 'Pending')
       ->execute();
+    */
+    civicrm_api3('MailingEventSubscribe', 'create', [
+      'group_id' => self::newsletterGroupId,
+      'email' => $email,
+    ]);
   }
 }
