@@ -48,7 +48,8 @@ class MuntpuntEvents {
 
     $events = \Civi\Api4\Event::get(FALSE)
       ->addSelect('*', 'custom.*')
-      ->addWhere('start_date', '>=', date('Y-m-d'))
+      ->addWhere('start_date', '<=', date('Y-m-d'))
+      ->addWhere('end_date', '>=', date('Y-m-d'))
       ->addWhere('extra_evenement_info.activiteit_status', '=', self::eventStatusCommunicatieOK)
       ->addWhere('is_active', '=', TRUE)
       ->addOrderBy('start_date', 'ASC')
@@ -354,7 +355,7 @@ class MuntpuntEvents {
         and
           re.entity_id <> $eventId
         and
-          e.start_date >= date_format(now(), '%Y-%m-%d')
+          e.start_date <= date_format(now(), '%Y-%m-%d') and e.end_date >= date_format(now(), '%Y-%m-%d')
         and
           e.is_active = 1
       ";
@@ -386,7 +387,7 @@ class MuntpuntEvents {
         where
           e.id not in ($idList)
         and
-          e.start_date >= date_format(now(), '%Y-%m-%d')
+          e.start_date <= date_format(now(), '%Y-%m-%d') and e.end_date >= date_format(now(), '%Y-%m-%d')
         and
           e.is_active = 1
         and
