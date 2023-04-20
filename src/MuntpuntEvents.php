@@ -95,6 +95,10 @@ class MuntpuntEvents {
       $e['registration_url'] = \CRM_Utils_System::baseURL() . 'civicrm/event/register?reset=1&id=' . $event['id'];
       $e['registration_label'] = $event['registration_link_text'];
     }
+    elseif ($event['extra_evenement_info.evenement_link']) {
+      $e['registration_url'] = $event['extra_evenement_info.evenement_link'];
+      $e['registration_label'] = 'Schrijf je hier in';
+    }
     else {
       $e['registration_url'] = '';
       $e['registration_label'] = '';
