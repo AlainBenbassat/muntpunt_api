@@ -233,7 +233,11 @@ class MuntpuntEvents {
       }
 
       if ($dao->url) {
-        $list .= '<a href="' . $dao->url . '">' . $dao->display_name . '</a>';
+        // TEMPORARY
+        $list .= $dao->display_name;
+
+        // It shoud be:
+        //$list .= '<a href="' . $dao->url . '">' . $dao->display_name . '</a>';
       }
       else {
         $list .= $dao->display_name;
